@@ -1056,6 +1056,8 @@ var sbContentSaver = {
 		var tagName = '', download;
 		var _typeof = typeof sNodeData;
 
+		var isNode = false;
+
 		if (_typeof === 'undefined' || !_typeof)
 		{
 			//
@@ -1067,6 +1069,8 @@ var sbContentSaver = {
 		else if (typeof sNodeData.nodeType !== 'undefined')
 		{
 			tagName = sNodeData.nodeName;
+
+			isNode = true;
 		}
 
 		tagName = (tagName || '').toLowerCase();
@@ -1087,10 +1091,10 @@ var sbContentSaver = {
 				}
 				break;
 			case 'a':
-				// BUG: not work, can't get sNodeData.getAttribute('download')
-				if (download = sbCommonUtils.validateFileName(sNodeData.getAttribute('download') || sNodeData.download || ''))
+				// Support HTML5 download Attribute
+				if (isNode && (download = sbCommonUtils.validateFileName(sNodeData.getAttribute('download') || sNodeData.download || '')))
 				{
-					var _fileLR = sbCommonUtils.splitFileName(fileLR[0] + "." + fileLR[1]);
+					var _fileLR = sbCommonUtils.splitFileName(download);
 
 					if (_fileLR[0])
 					{
@@ -1111,16 +1115,6 @@ var sbContentSaver = {
 				}
 				break;
 		}
-
-		/*
-		//var console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
-
-		Components.utils.import("resource://gre/modules/devtools/Console.jsm");
-
-		console.log(['ScrapBook> handleFileName', tagName, fileLR, newFileName, aURLSpec, aDocumentSpec, sNodeData]);
-
-		//fileLR[0] = sbCommonUtils.validateFileName(fileLR[0]);
-		*/
 
 		return fileLR;
 	},
